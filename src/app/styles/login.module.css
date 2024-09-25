@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.formulario {
+  border: 1px solid #ccc;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.titulo {
+  margin-bottom: 1rem;
+}
+
+.grupoInput {
+  margin-bottom: 1rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.botao {
+  padding: 0.75rem 1.5rem;
+  background-color: #fff; /* Fundo branco */
+  color: #000; /* Texto preto */
+  border: 1px solid #ccc; /* Borda leve para o botão */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Transição suave ao passar o mouse */
+}
+
+.botao:hover {
+  background-color: #f0f0f0; /* Muda a cor de fundo ao passar o mouse */
+}
