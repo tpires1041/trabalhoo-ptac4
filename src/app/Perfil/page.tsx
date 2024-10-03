@@ -1,4 +1,4 @@
-import PerfilUsuario from "../interfaces/usuario";
+import Usuario from "../interfaces/usuario";
 
 const Perfil= () => {
     const usuario ={
@@ -9,7 +9,6 @@ const Perfil= () => {
     return(
         <div>
             <h1>Perfil Usuário</h1>
-            <PerfilUsuario usuario={usuario}/>
         </div>
     )
 } 
