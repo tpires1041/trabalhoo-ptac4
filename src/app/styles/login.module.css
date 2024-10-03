@@ -35,14 +35,14 @@
 
 .botao {
   padding: 0.75rem 1.5rem;
-  background-color: #fff; /* Fundo branco */
-  color: #000; /* Texto preto */
-  border: 1px solid #ccc; /* Borda leve para o botão */
+  background-color: #fff;
+  color: #000; 
+  border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s; /* Transição suave ao passar o mouse */
+  transition: background-color 0.3s; 
 }
 
 .botao:hover {
-  background-color: #f0f0f0; /* Muda a cor de fundo ao passar o mouse */
+  background-color: #f0f0f0; 
 }

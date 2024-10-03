@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from '../styles/login.module.css'; // Caminho corrigido
+import styles from '../styles/login.module.css';
+import Button from '../components/Button';
+
 
 const PaginaLogin = () => {
   const [usuario, setUsuario] = useState('');
@@ -44,6 +46,7 @@ const PaginaLogin = () => {
             className={styles.input}
           />
         </div>
+        <Button titulo='Entrar' tipo='submit'/>
         <button type="submit" className={styles.botao}>Entrar</button>
       </form>
     </div>
