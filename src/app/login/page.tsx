@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../styles/login.module.css';
 import Button from '../components/Button';
+import Link from 'next/link';
 
 
 const PaginaLogin = () => {
@@ -46,8 +47,10 @@ const PaginaLogin = () => {
             className={styles.input}
           />
         </div>
-        <Button titulo='Entrar' tipo='submit'/>
-        <button type="submit" className={styles.botao}>Entrar</button>
+        <Button titulo='Entrar' tipo='submit' />
+        <Link href="./cadastrar">
+          <Button titulo='Cadastrar' tipo='submit' />
+        </Link>
       </form>
     </div>
   );
