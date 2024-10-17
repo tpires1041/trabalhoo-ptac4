@@ -2,15 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from '../styles/login.module.css';
+import styles from '../styles/cadastrar.module.css';
 import Button from '../components/Button';
 import Usuario from '../interfaces/usuario';
 
 
 const PaginaCadastro = () => {
-    const [email, setEmail] = useState<string>('');
-    const [tipo, setTipo] = useState<string>('');
-    const [senha, setSenha] = useState<string>('');
 
     const [usuario, setUsuario] = useState<Usuario>({
         nome: '',
@@ -83,7 +80,7 @@ const PaginaCadastro = () => {
                     <input
                         type="text"
                         id="email"
-                        value={email}
+                        value={usuario.email}
                         onChange={(e) => alterarEmail(e.target.value)}
                         className={styles.input}
                     />
@@ -95,7 +92,7 @@ const PaginaCadastro = () => {
                     <input
                         type="password"
                         id="senha"
-                        value={senha}
+                        value={usuario.senha}
                         onChange={(e) => alterarPassword(e.target.value)}
                         className={styles.input}
                     />
