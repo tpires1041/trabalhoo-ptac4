@@ -92,7 +92,7 @@ const PaginaCadastro = () => {
                     <input
                         type="password"
                         id="senha"
-                        value={usuario.senha}
+                        value={usuario.password}
                         onChange={(e) => alterarPassword(e.target.value)}
                         className={styles.input}
                     />
