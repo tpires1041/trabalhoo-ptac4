@@ -28,6 +28,7 @@ const PaginaLogin = () => {
         router.push('/');
       } else {
         console.log('Usuário ou senha incorretos.');
+        alert("Usuário ou senha incorretos.")
       }
     } catch (error) {
       console.error('Erro ao buscar os usuários:', error);

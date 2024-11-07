@@ -45,7 +45,15 @@ const PaginaCadastro = () => {
             ...valoresAnteriores,
             password: novoPassword
         }))
-    }
+    };
+
+    const handleCadastro = (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+
+        router.push('/login');
+    };
 
     const router = useRouter();
 
