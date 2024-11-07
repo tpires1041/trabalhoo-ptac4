@@ -6,45 +6,59 @@ import Usuario from '../interfaces/usuario';
 import styles from '../styles/login.module.css';
 import Button from '../components/Button';
 import Link from 'next/link';
+import { setCookie, parseCookies } from 'nookies';
 
 const PaginaLogin = () => {
-  const [usuario, setUsuario] = useState('');
+  const [email, password] = useState('');
   const [senha, setSenha] = useState('');
+  const [errorMsg, setMsgError] = useState('')
   const router = useRouter();
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+  useEffect(()=> {
+    const {'restaurant-token' : token} = parseCookies()
+    if (token){
+      router.push('/')
+    }
+  }, [router])
+
+
+  const  handleSubmit = async (e :FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://prof-jeferson.github.io/API-reservas/usuarios.json');
-      if (!response.ok) {
-        console.log('Erro ao buscar os dados.');
-        return;
-      }
-      const usuarios: Usuario[] = await response.json();
 
-      const user = usuarios.find((user) => user.email === usuario && user.password === senha);
-      if (user) {
-        localStorage.setItem('usuario', JSON.stringify(user));
-        router.push('/');
-      } else {
-        console.log('Usuário ou senha incorretos.');
-        alert("Usuário ou senha incorretos.")
+      const response = await fetch(`${ApiURL}/auth/login`, {	'
+        method: 'POST',
+        headers: {
+          'Content-Type' : 'application/json'
+        },
+        body : JSON.stringify({email, password})
+      })
+  
+      if (response){
+        const data = await response.json();
+        const {erro, mensagem, token} = data
+        console.log(data)
+        if (erro){
+          setMsgError(mensagem)
+        } else {
+          setCookie(undefined, 'restaurant-token', token, {
+            maxAge: 60*60*1 //1 hora
+          })
+          router.push('/')
+        }
       }
     } catch (error) {
-      console.error('Erro ao buscar os usuários:', error);
+      console.error('Erro na requisicao', error)
     }
+
+    console.log('Email:', email);
+    console.log('Senha:', password);
   };
-
-  useEffect(() => {
-    const usuarioLogado = localStorage.getItem('usuario');
-    if (usuarioLogado) {
-      router.push('/');
-    }
-  }, [router]);
-
+  
   return (
     <div className={styles.container}>
-      <form onSubmit={onSubmit} className={styles.formulario}>
+      <form onSubmit={handleSubmit} className={styles.formulario}>
         <h1 className={styles.titulo}>Login</h1>
         <div className={styles.grupoInput}>
           <label htmlFor="usuario" className={styles.label}>Usuário:</label>

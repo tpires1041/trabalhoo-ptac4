@@ -50,6 +50,7 @@ const PaginaCadastro = () => {
     const handleCadastro = (e: React.FormEvent) => {
         e.preventDefault();
         
+        
         localStorage.setItem('usuario', JSON.stringify(usuario));
 
         router.push('/login');
