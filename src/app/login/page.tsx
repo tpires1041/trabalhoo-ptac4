@@ -2,6 +2,8 @@
 
 import { useEffect, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import styles from '../styles/login.module.css';
 import Button from '../components/Button';
 import Link from 'next/link';
@@ -54,36 +56,40 @@ const PaginaLogin = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <form onSubmit={handleSubmit} className={styles.formulario}>
-        <h1 className={styles.titulo}>Login</h1>
-        <div className={styles.grupoInput}>
-          <label htmlFor="usuario" className={styles.label}>Usuário:</label>
-          <input
-            type="text"
-            id="usuario"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.grupoInput}>
-          <label htmlFor="senha" className={styles.label}>Senha:</label>
-          <input
-            type="password"
-            id="senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            className={styles.input}
-          />
-        </div>
-        {errorMsg && <p className={styles.errorMsg}>{errorMsg}</p>}
-        <Button titulo="Entrar" tipo="submit" />
-        <Link href="./cadastrar">
-          <Button titulo="Cadastrar" tipo="submit" />
-        </Link>
-      </form>
-    </div>
+    <>
+    <Header />
+      <div className={styles.container}>
+        <form onSubmit={handleSubmit} className={styles.formulario}>
+          <h1 className={styles.titulo}>Login</h1>
+          <div className={styles.grupoInput}>
+            <label htmlFor="usuario" className={styles.label}>Usuário:</label>
+            <input
+              type="text"
+              id="usuario"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              className={styles.input}
+            />
+          </div>
+          <div className={styles.grupoInput}>
+            <label htmlFor="senha" className={styles.label}>Senha:</label>
+            <input
+              type="password"
+              id="senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              className={styles.input}
+            />
+          </div>
+          {errorMsg && <p className={styles.errorMsg}>{errorMsg}</p>}
+          <Button titulo="Entrar" tipo="submit" />
+          <Link href="./cadastrar">
+            <Button titulo="Cadastrar" tipo="submit" />
+          </Link>
+        </form>
+      </div>
+      <Footer />
+    </>
   );
 };
 

@@ -1,14 +1,25 @@
 'use client';
 
 import Link from 'next/link';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import styles from './styles/home.module.css';
 
 const Home = () => {
   return (
-    <div className={styles.container}>
-      <h1 className={styles.titulo}>Bem-vindo!</h1>
-      <Link href="/login" className={styles.link}>Ir para a página de login</Link>
-    </div>
+    <>
+      <Header />
+      
+      <nav className={styles.menu}>
+        <ul className={styles.listaMenu}>
+          <li><Link href="/login"><button className={styles.botao}>Login</button></Link></li>
+          <li><Link href="/cadastrar"><button className={styles.botao}>Cadastrar</button></Link></li>
+          <li><Link href="/reservar"><button className={styles.botao}>Reservar Mesa</button></Link></li>
+        </ul>
+      </nav>
+
+      <Footer />
+    </>
   );
 };
 

@@ -1,25 +1,85 @@
-.container {
+.header {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo {
+  width: 100px;
+}
+
+.frase {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
+  color: #333;
+}
+
+.menu {
+  display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  text-align: center;
+  flex-grow: 1;
   background-color: #f0f0f0;
 }
 
-.titulo {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 1.5rem;
+.listaMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  list-style: none;
+  padding: 0;
 }
 
-.link {
-  font-size: 1.25rem;
-  color: #0070f3;
+.listaMenu li {
+  display: block;
+}
+
+.botao {
+  width: 300px;
+  padding: 15px;
+  font-size: 18px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.botao:hover {
+  background-color: #45a049;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f8f8;
+  margin-top: auto;
+}
+
+.linksRedesSociais {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 15px;
+}
+
+.linksRedesSociais li {
+  display: inline;
+}
+
+.linksRedesSociais a {
   text-decoration: none;
-  border: 2px solid transparent;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  background-color: #fff;
+  color: #333;
+}
+
+.linksRedesSociais a:hover {
+  color: #4CAF50;
 }

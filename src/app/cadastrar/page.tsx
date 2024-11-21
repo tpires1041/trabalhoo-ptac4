@@ -3,8 +3,11 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../styles/cadastrar.module.css';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import Button from '../components/Button';
 import { ApiURL } from '../../../config';
+import { setCookie } from 'nookies';
 
 const PaginaCadastro = () => {
   const [usuario, setUsuario] = useState({
@@ -34,12 +37,22 @@ const PaginaCadastro = () => {
         },
         body: JSON.stringify(usuario)
       });
-
+      console.log(response)
       if (response.ok) {
-        router.push('/login');
-      } else {
         const data = await response.json();
-        setErrorMsg(data.message || 'Erro ao cadastrar. Tente novamente.');
+        const { erro, mensagem, token } = data;
+        console.log(mensagem)
+
+        if (erro) {
+          setErrorMsg(mensagem);
+        } else {
+          setCookie(undefined, 'restaurant-token', token, {
+            maxAge: 60 * 60 * 1
+          });
+          router.push('/');
+        }
+      } else {
+        setErrorMsg('Erro ao fazer login. Verifique suas credenciais.');
       }
     } catch (error) {
       console.error('Erro na requisição', error);
@@ -48,6 +61,8 @@ const PaginaCadastro = () => {
   };
 
   return (
+    <>
+    <Header />
     <div className={styles.container}>
       <form onSubmit={handleCadastro} className={styles.formulario}>
         <h1 className={styles.titulo}>Cadastrar</h1>
@@ -95,6 +110,8 @@ const PaginaCadastro = () => {
         <Button titulo='Cadastrar' tipo='submit' />
       </form>
     </div>
+    <Footer />
+    </>
   );
 };
 
