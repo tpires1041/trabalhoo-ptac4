@@ -7,7 +7,7 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <a href="/"><img src="/logo.png" alt="Logo" className={styles.logo} /></a>
-      <p className={styles.frase}>Cultivando tradições, inovando sabores</p>  
+      <h1 className={styles.frase}>Cultivando tradições, inovando sabores</h1>  
     </header>
   );
 };

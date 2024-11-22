@@ -8,7 +8,7 @@ import styles from '../styles/login.module.css';
 import Button from '../components/Button';
 import Link from 'next/link';
 import { setCookie, parseCookies } from 'nookies';
-import { ApiURL } from '../../../config'
+import { ApiURL } from '../../../config';
 
 const PaginaLogin = () => {
   const [usuario, setUsuario] = useState('');
@@ -19,7 +19,7 @@ const PaginaLogin = () => {
   useEffect(() => {
     const { 'restaurant-token': token } = parseCookies();
     if (token) {
-      router.push('/');
+      console.log("logado")
     }
   }, [router]);
 
@@ -29,9 +29,9 @@ const PaginaLogin = () => {
       const response = await fetch(`${ApiURL}/auth/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: usuario, password: senha })
+        body: JSON.stringify({ email: usuario, password: senha }),
       });
 
       if (response.ok) {
@@ -42,7 +42,7 @@ const PaginaLogin = () => {
           setErrorMsg(mensagem);
         } else {
           setCookie(undefined, 'restaurant-token', token, {
-            maxAge: 60 * 60 * 1
+            maxAge: 60 * 60 * 1,
           });
           router.push('/');
         }
@@ -57,12 +57,15 @@ const PaginaLogin = () => {
 
   return (
     <>
-    <Header />
+      <Header />
       <div className={styles.container}>
+        <div className={styles.background}></div>
         <form onSubmit={handleSubmit} className={styles.formulario}>
           <h1 className={styles.titulo}>Login</h1>
           <div className={styles.grupoInput}>
-            <label htmlFor="usuario" className={styles.label}>Usuário:</label>
+            <label htmlFor="usuario" className={styles.label}>
+              Usuário:
+            </label>
             <input
               type="text"
               id="usuario"
@@ -72,7 +75,9 @@ const PaginaLogin = () => {
             />
           </div>
           <div className={styles.grupoInput}>
-            <label htmlFor="senha" className={styles.label}>Senha:</label>
+            <label htmlFor="senha" className={styles.label}>
+              Senha:
+            </label>
             <input
               type="password"
               id="senha"

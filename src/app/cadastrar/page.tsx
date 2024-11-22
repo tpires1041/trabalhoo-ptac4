@@ -64,6 +64,7 @@ const PaginaCadastro = () => {
     <>
     <Header />
     <div className={styles.container}>
+    <div className={styles.background}></div>
       <form onSubmit={handleCadastro} className={styles.formulario}>
         <h1 className={styles.titulo}>Cadastrar</h1>
         <div className={styles.grupoInput}>
