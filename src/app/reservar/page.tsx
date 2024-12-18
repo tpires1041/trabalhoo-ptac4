@@ -1,79 +1,123 @@
-'use client';
+"use client";
+import Image from "next/image";
+import { ChangeEvent, useState } from "react";
+import styles from "../styles/reservar.module.css";
 
-import { useState, FormEvent } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import styles from '../styles/login.module.css';
-import Button from '../components/Button';
+export default function Home() {
+  function getDateNow() {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  }
 
-const PaginaReservar = () => {
-  const [mesa, setMesa] = useState('');
-  const [data, setData] = useState('');
-  const [nPessoas, setNPessoas] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [dateTables, setDateTables] = useState(getDateNow);
+  const tables = [
+    { id: 1, nome: "Mesa 1" },
+    { id: 2, nome: "Mesa 2" },
+    { id: 3, nome: "Mesa 3" },
+  ];
+  const reservas = [
+    {
+      id: 1,
+      mesa: 1,
+      data: "2024-11-29",
+    },
+    {
+      id: 1,
+      mesa: 2,
+      data: "2024-11-29",
+    },
+    {
+      id: 1,
+      mesa: 2,
+      data: "2024-11-28",
+    },
+  ];
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!mesa || !data || !nPessoas) {
-      setErrorMsg('Preencha todos os campos para continuar.');
-    } else {
-      setErrorMsg('');
-      alert('Reserva feita com sucesso!');
-    }
-  };
+  function handleChangeDate(e: ChangeEvent<HTMLInputElement>) {
+    setDateTables(e.target.value);
+  }
 
   return (
-    <>
-      <Header />
-      <div className={styles.container}>
-        <div className={styles.background}></div>
-        <form onSubmit={handleSubmit} className={styles.formulario}>
-          <h1 className={styles.titulo}>Reservar Mesa</h1>
-          <div className={styles.grupoInput}>
-            <label htmlFor="mesa" className={styles.label}>
-              Mesa:
-            </label>
-            <input
-              type="number"
-              id="mesa"
-              value={mesa}
-              onChange={(e) => setMesa(e.target.value)}
-              className={styles.input}
-              placeholder="Digite o número da mesa"
+    <div className={styles.container}>
+      <div className={styles.linha}>
+        <div className={styles.coluna}>
+          <div className={styles.cartaousuario}>
+            <img
+              src="https://github.com/MrMinerin.png"
+              alt="Usuário"
+              className="imagem-usuario"
             />
+            <h2>Jéferson Carlos de Souza</h2>
+            <p>Cliente</p>
           </div>
-          <div className={styles.grupoInput}>
-            <label htmlFor="data" className={styles.label}>
-              Data:
-            </label>
+        </div>
+        <div className="coluna">
+          <div className="lista-mesas">
+            <h2>Mesas Disponíveis</h2>
             <input
               type="date"
-              id="data"
-              value={data}
-              onChange={(e) => setData(e.target.value)}
-              className={styles.input}
+              value={dateTables}
+              min={dateTables}
+              onChange={handleChangeDate}
             />
           </div>
-          <div className={styles.grupoInput}>
-            <label htmlFor="nPessoas" className={styles.label}>
-              Número de Pessoas:
-            </label>
-            <input
-              type="number"
-              id="nPessoas"
-              value={nPessoas}
-              onChange={(e) => setNPessoas(e.target.value)}
-              className={styles.input}
-              placeholder="Digite o número de pessoas"
-            />
+          <div className="mesas">
+            {tables.map((table) => {
+              if (
+                reservas.find(
+                  (reserva) =>
+                    dateTables === reserva.data && reserva.mesa === table.id
+                )
+              ) {
+                return (
+                  <button
+                    key={table.id}
+                    className="mesa indisponivel"
+                    onClick={() => setSelectedTable(table.nome)}
+                  >
+                    {table.nome}
+                  </button>
+                );
+              } else {
+                return (
+                  <button
+                    key={table.id}
+                    className="mesa disponivel"
+                    onClick={() => setSelectedTable(table.nome)}
+                  >
+                    {table.nome}
+                  </button>
+                );
+              }
+            })}
           </div>
-          {errorMsg && <p className={styles.errorMsg}>{errorMsg}</p>}
-          <Button titulo="Reservar" tipo="submit" />
-        </form>
+        </div>
+        <div className="coluna">
+          {selectedTable ? (
+            <div className="formulario-reserva">
+              <h2>Reservar {selectedTable}</h2>
+              <form>
+                <label>
+                  Nome:
+                  <input type="text" placeholder="Seu nome" />
+                </label>
+                <label>
+                  Data:
+                  <input type="date" />
+                </label>
+                <label>
+                  Pessoas:
+                  <input type="number" max={4} min={1} />
+                </label>
+                <button type="submit">Confirmar Reserva</button>
+              </form>
+            </div>
+          ) : (
+            <p>Selecione uma mesa para reservar</p>
+          )}
+        </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
-};
-
-export default PaginaReservar;
+}
