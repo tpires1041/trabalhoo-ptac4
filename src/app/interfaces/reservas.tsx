@@ -2,7 +2,7 @@ interface Reserva {
     id: number,
     usuario_id: number,
     mesa_id: number,
-    data: Date,
+    data: string,
     n_pessoas: number,
     status: boolean
 }

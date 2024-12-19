@@ -1,9 +1,21 @@
-"use client";
-import Image from "next/image";
-import { ChangeEvent, useState } from "react";
-import styles from "../styles/reservar.module.css";
+"use client" 
+import { ChangeEvent, useEffect, useState } from "react";
+import Reservas from "../reservas-server/page";
 
 export default function Home() {
+  const [mesas, setMesas] = useState<Mesas[]>([])
+  const [reservas, setReservas] = useState<Reservas[]>([])
+  
+  useEffect(() => {
+    async function fetchData(){
+      const response = await fetch('http://localhost:3333/reservas')
+      const data = await response.json()
+      setMesas(data.mesas)
+    }
+    fetchData()
+  }, [])
+
+
   function getDateNow() {
     const today = new Date();
     return today.toISOString().split("T")[0];
