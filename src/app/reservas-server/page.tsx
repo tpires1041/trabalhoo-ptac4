@@ -1,26 +1,47 @@
 
-import { ChangeEvent} from "react";
-import { FecthMesas } from "../components/FecthMesas";
+import { ChangeEvent, useState } from "react";
+import { FetchMesas } from "../components/FetchMesas";
 
-type MesasType = {
-  id:  number,
-  codigo: string,
-  n_lugares: number
-}
+export type MesasType = {
+  id: number;
+  codigo: string;
+  n_lugares: number;
+  disponivel: boolean
+};
+
+export type ReservasType = {
+  id: number;
+  usuario_id: number;
+  mesa_id: number;
+  data: string;
+  n_pessoas: number;
+  status: boolean;
+};
 
 export default function Reservas() {
+  const [mesas, setMesas] = useState<MesasType[]>([]);
+  const [reservas, setReservas] = useState<ReservasType[]>([]);
+  const [formReserva, setFormReserva] = useState<ReservasType>({
+    id: 0,
+    usuario_id: 0,
+    mesa_id: 0,
+    data: '',
+    n_pessoas: 0,
+    status: false
+  });
 
-  
-  function getDateNow (){
-    const today = new Date()
-    return today.toISOString().split("T")[0]
+  function getDateNow() {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
   }
-
-
-
+  
 
   function handleChangeDate (e: ChangeEvent<HTMLInputElement>) {
-    
+    const { value } = e.target;
+    setFormReserva(prevState => ({
+      ...prevState,
+      data: value
+    }));
   }
 
 
@@ -53,7 +74,7 @@ export default function Reservas() {
           </label>
         </div>
         
-        <FecthMesas/>
+        <FetchMesas/>
       </div>
      
     </div>

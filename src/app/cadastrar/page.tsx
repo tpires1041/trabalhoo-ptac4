@@ -14,7 +14,7 @@ const PaginaCadastro = () => {
     nome: '',
     email: '',
     password: '',
-    tipo: ''
+    tipo: 'cliente'
   });
   const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
@@ -52,7 +52,7 @@ const PaginaCadastro = () => {
           router.push('/');
         }
       } else {
-        setErrorMsg('Erro ao fazer login. Verifique suas credenciais.');
+        setErrorMsg('Erro ao fazer cadastro. Verifique suas credenciais.');
       }
     } catch (error) {
       console.error('Erro na requisição', error);
@@ -73,16 +73,6 @@ const PaginaCadastro = () => {
             type="text"
             id="nome"
             value={usuario.nome}
-            onChange={handleInputChange}
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.grupoInput}>
-          <label htmlFor="tipo" className={styles.label}>Tipo:</label>
-          <input
-            type="text"
-            id="tipo"
-            value={usuario.tipo}
             onChange={handleInputChange}
             className={styles.input}
           />

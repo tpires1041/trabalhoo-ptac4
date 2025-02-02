@@ -1,9 +1,7 @@
-interface Usuario {
-    id?: number,
+export interface Usuario {
+    id: number,
     nome: string,
-    email?: string,
+    email: string,
     password: string,
-    tipo: string
+    tipo: "cliente" | "admin"
 }
-
-export default Usuario;
