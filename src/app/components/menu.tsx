@@ -2,7 +2,7 @@
 
 import { Usuario } from '../interfaces/usuario';
 import Link from 'next/link';
-import { ClipboardList, ChefHat, User } from 'lucide-react';
+import { ClipboardList, ChefHat, User, LogOut } from 'lucide-react';
 
 type MenuProps = {
   user: Usuario;

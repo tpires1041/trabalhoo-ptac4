@@ -1,25 +1,29 @@
-'use server'
-
 import { redirect } from 'next/navigation'
 import { fetchUser } from '../utils/auth' 
 import { fetchMesas } from '../utils/mesas'
-import { fetchTodasReservas } from '../utils/reservas' // Certifique-se de ter a função para buscar as reservas
-import Menu from '../components/Menu'
+import { fetchReserva } from '../utils/reservas'
+import Menu from '../components/menu'
 import ListMesas from '../mesas/listmesas'
 
 export default async function Mesas() {
   const user = await fetchUser()
   const mesas = await fetchMesas()
-  const reservas = await fetchReservas() // Certifique-se de que essa função está implementada corretamente
+  const reservas = await fetchReserva(new Date().toISOString()) // Pass the required argument
 
   if (!user || user.tipo === 'cliente' || !mesas) {
     redirect('/')
   }
 
+  // Map reservas to the expected format
+  const reservasFormatted = (reservas || []).map(reserva => ({
+    mesaId: reserva.mesa_id,
+    // Add other properties if needed
+  }))
+
   return (
     <div>
       <Menu user={user} />
-      <ListMesas mesas={mesas} reservas={reservas} />  {/* Passando ambas as props */}
+      <ListMesas mesas={mesas} reservas={reservasFormatted} />
     </div>
   )
 }

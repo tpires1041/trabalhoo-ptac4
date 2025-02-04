@@ -1,4 +1,4 @@
-import Menu from '@/app/components/Menu'
+import  Menu  from "../../components/menu";
 import { fetchUser } from '../../utils/auth'
 import { redirect } from 'next/navigation'
 import { fetchMesas } from '../../utils/mesas'
