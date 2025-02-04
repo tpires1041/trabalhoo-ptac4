@@ -4,7 +4,7 @@ export type mesasType = {
     n_lugares: number
   }
   
-  export async function ListMesas (){
+  export default async function ListMesas (){
       
   
       const response = await fetch('http://localhost:8000/reservas')

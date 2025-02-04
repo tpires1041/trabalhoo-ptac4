@@ -33,7 +33,7 @@ const Home = () => {
             </Link>
           </li>
           <li>
-            <Link href="/reservas">
+            <Link href="/reservas/novo">
               <button className={styles.botao}>Reservar Mesa</button>
             </Link>
           </li>

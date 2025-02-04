@@ -1,4 +1,4 @@
-'use server'
+'use client'
 
 import ModalMap from '@/app/components/modalMap';
 import { Mesas } from '../../interfaces/mesas';
