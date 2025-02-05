@@ -11,18 +11,21 @@ import { setCookie, parseCookies } from 'nookies';
 import { ApiURL } from '../../../config';
 
 const PaginaLogin = () => {
+  // estados para armazenar usuário, senha e mensagens de erro
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
 
+  // verifica se já existe um token de autenticação
   useEffect(() => {
     const { 'restaurant-token': token } = parseCookies();
     if (token) {
-      console.log("logado")
+      console.log("logado");
     }
   }, [router]);
 
+  // função para processar o envio do formulário de login
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {

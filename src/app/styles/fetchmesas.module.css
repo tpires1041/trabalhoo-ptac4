@@ -1,0 +1,29 @@
+.mesaGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+  }
+  
+  .mesasGrid.sm {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .mesaButton {
+    padding: 16px;
+    color: white;
+    background-color: #4f46e5;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .mesaButton:hover {
+    background-color: #4338ca;
+  }
+  
+  .mesaButton:focus {
+    outline: none;
+    background-color: #3730a3;
+  }
