@@ -1,10 +1,10 @@
 'use client'
 
+import styles from '../../styles/reservasnovo.module.css';
 import ModalMap from '@/app/components/modalMap';
 import { Mesas } from '../../interfaces/mesas';
-import { Reserva } from '../../interfaces/reservas';
 import { useState, FormEvent } from "react";
-import { fetchReserva } from '../../utils/reservas';
+import { fetchMesasDisponiveis } from '../../utils/reservas';
 import { fetchNovaReserva } from '../../utils/reservas';
 import { useRouter } from 'next/navigation';
 
@@ -14,33 +14,29 @@ type ListMesasReservaProps = {
 
 export function ListMesasReserva({ mesas }: ListMesasReservaProps) {
     const [data, setData] = useState('');
-    const [reservas, setReservas] = useState<Reserva[] | null>(null);
-    const [loadReservas, setLoadReservas] = useState(false);
+    const [mesasDisponiveis, setMesasDisponiveis] = useState<Mesas[] | null>(null);
+    const [mesasReservadas, setMesasReservadas] = useState<number[] | null>(null);
+    const [loadMesas, setLoadMesas] = useState(false);
     const [mesaS, setMesaS] = useState<Mesas | null>(null);
     const [response, setResponse] = useState({ erro: false, mensagem: '' });
     const router = useRouter();
 
-    // Função para buscar reservas baseadas na data
     async function handleFetchData() {
-        setLoadReservas(true);
+        setLoadMesas(true);
         
         try {
-            const res = await fetchReserva(data);
-            
-            // Verifica se res é válido e se contém a propriedade erro
-            if (res && 'erro' in res && !res.erro) {
-                router.push('/reservas/novo');
-            }
-
-            setReservas(res);
+            const res = await fetchMesasDisponiveis(data);
+            console.log('Mesas Disponíveis:', res.mesasDisponiveis);
+            console.log('Mesas Reservadas:', res.mesasReservadas);
+            setMesasDisponiveis(res.mesasDisponiveis);
+            setMesasReservadas(res.mesasReservadas);
         } catch (error) {
-            console.error("Erro ao buscar reservas:", error);
+            console.error("Erro ao buscar mesas:", error);
         }
 
-        setLoadReservas(false);
+        setLoadMesas(false);
     }
 
-    // Função para submeter o formulário de reserva
     async function handleFormSubmit(e: FormEvent) {
         e.preventDefault();
         const form = e.target as HTMLFormElement;
@@ -54,99 +50,88 @@ export function ListMesasReserva({ mesas }: ListMesasReservaProps) {
     }
 
     return (
-        <div>
-            <div>
-                <h2>Mapa Restaurante:</h2>
-                <ModalMap />
-                <h2>Fazer Reserva:</h2>
-                <div>
-                    <input
-                        type="date"
-                        value={data}
-                        onChange={(e) => setData(e.target.value)}
-                    />
-                </div>
-                <button type="button" onClick={handleFetchData}>
+        <div className={styles.container}>
+            <h2 className={styles.title}>Mapa do Restaurante:</h2>
+            <ModalMap />
+            <h2 className={styles.title}>Fazer Reserva:</h2>
+            <div className={styles.inputContainer}>
+                <input
+                    className={styles.input}
+                    type="date"
+                    value={data}
+                    onChange={(e) => setData(e.target.value)}
+                />
+                <button className={styles.button} type="button" onClick={handleFetchData}>
                     Buscar
                 </button>
-
-                {loadReservas && <p>Carregando...</p>}
-
-                {/* Renderizando as mesas */}
-                {reservas && mesas.map(mesa => {
-                    const mesaReservada = reservas.find(reserva => reserva.mesa_id === mesa.id);
-                    if (mesaReservada) {
-                        return (
-                            <button
-                                key={mesa.id}
-                                className="reservado"
-                            >
-                                {mesa.codigo}
-                            </button>
-                        );
-                    } else {
-                        return (
-                            <button
-                                onClick={() => setMesaS(mesa)}
-                                key={mesa.id}
-                                className="livre"
-                            >
-                                {mesa.codigo}
-                            </button>
-                        );
-                    }
-                })}
             </div>
 
-            {/* Formulário de reserva */}
+            {loadMesas && <p>Carregando...</p>}
+
+            <div className={styles.mesasContainer}>
+                {mesasDisponiveis && mesasDisponiveis.map(mesa => (
+                    <button
+                        key={mesa.id}
+                        onClick={() => setMesaS(mesa)}
+                        className={`${styles.mesaButton} ${styles.livre}`}
+                    >
+                        {mesa.codigo}
+                    </button>
+                ))}
+                {mesasReservadas && mesasReservadas.map(mesaId => (
+                    <button
+                        key={mesaId}
+                        className={`${styles.mesaButton} ${styles.reservado}`}
+                        disabled
+                    >
+                        {mesas.find(mesa => mesa.id === mesaId)?.codigo}
+                    </button>
+                ))}
+            </div>
+
             {mesaS && (
-                <div>
-                    <div>
-                        <h3>Confirmar Reserva:</h3>
-                        <form onSubmit={handleFormSubmit}>
-                            <label>
-                                Data:
-                                <input type="date" value={data} readOnly name="data" />
-                            </label>
+                <div className={styles.formContainer}>
+                    <h3 className={styles.formTitle}>Confirmar Reserva:</h3>
+                    <form className={styles.form} onSubmit={handleFormSubmit}>
+                        <label className={styles.label}>
+                            Data:
+                            <input className={styles.input} type="date" value={data} readOnly name="data" />
+                        </label>
 
+                        <input
+                            type="number"
+                            hidden
+                            readOnly
+                            value={mesaS.id}
+                            name="mesaId"
+                        />
+
+                        <label className={styles.label}>
+                            Mesa Selecionada:
+                            <input className={styles.input} type="text" value={mesaS.codigo} readOnly name="codigo" />
+                        </label>
+
+                        <label className={styles.label}>
+                            Número de pessoas:
                             <input
+                                className={styles.input}
                                 type="number"
-                                hidden
-                                readOnly
-                                value={mesaS.id}
-                                name="mesaId"
+                                max={mesaS.n_lugares}
+                                min={1}
+                                name="n_pessoas"
+                                required
                             />
+                        </label>
 
-                            <label>
-                                Mesa Selecionada:
-                                <input type="text" value={mesaS.codigo} readOnly name="codigo" />
-                            </label>
+                        {response.erro && <p className={styles.errorMessage}>{response.mensagem}</p>}
 
-                            <label>
-                                Número de pessoas:
-                                <input
-                                    type="number"
-                                    max={mesaS.n_lugares}
-                                    min={1}
-                                    name="n_pessoas"
-                                    required
-                                />
-                            </label>
-
-                            {response.erro && <p>{response.mensagem}</p>}
-
-                            <div>
-                                <button
-                                    type="button"
-                                    onClick={() => setMesaS(null)}
-                                >
-                                    Cancelar
-                                </button>
-
-                                <button type="submit">Confirmar</button>
-                            </div>
-                        </form>
-                    </div>
+                        <div className={styles.buttonContainer}>
+                            <button className={styles.button} type="button" onClick={() => setMesaS(null)}>
+                                Cancelar
+                            </button>
+                            <button className={styles.button} type="submit">Confirmar</button>
+                        </div>
+                    </form>
                 </div>
             )}
         </div>

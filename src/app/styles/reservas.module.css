@@ -2,148 +2,76 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px;
-}
-
-.linha {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  gap: 20px;
-}
-
-.coluna {
-  width: 48%;
-}
-
-.listaMesas {
-  margin-bottom: 20px;
-}
-
-.mesas {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.mesa {
-  padding: 15px;
-  background-color: #f0f0f0;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.mesa:hover {
-  transform: scale(1.05);
-}
-
-.disponivel {
-  background-color: #4caf50;
-  color: white;
-}
-
-.indisponivel {
-  background-color: #f44336;
-  color: white;
-  cursor: not-allowed;
-}
-
-.mesaStatus {
-  font-size: 12px;
-  color: #fff;
-}
-
-.formularioReserva {
-  background-color: #f9f9f9;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
-.formularioReserva h2 {
-  margin-bottom: 15px;
-}
-
-.formularioReserva form {
+.menuContainer {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-}
-
-.formularioReserva label {
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.formularioReserva input {
-  padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.btnReservar {
-  padding: 12px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.btnReservar:hover {
-  background-color: #45a049;
-}
-
-.btnReservar:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.minhasReservas {
-  margin-top: 30px;
-  width: 80%;
+  align-items: center;
+  background-color: #ffffff;
   padding: 20px;
-  background-color: #f0f0f0;
   border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 400px;
 }
 
-.minhasReservas ul {
-  list-style: none;
-  padding: 0;
+.reservasContainer {
+  width: 100%;
+  max-width: 800px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
 .reservaItem {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
-  padding: 12px;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 
-.btnCancelarReserva {
-  background-color: #f44336;
-  color: white;
-  font-size: 14px;
-  padding: 6px 12px;
-  border-radius: 5px;
+.reservaItem:last-child {
+  border-bottom: none;
+}
+
+.reservaInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.reservaActions {
+  display: flex;
+  gap: 10px;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.btnCancelarReserva:hover {
-  background-color: #e53935;
+.button:hover {
+  background-color: #0056b3;
+}
+
+.button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc3545;
+  margin-bottom: 10px;
 }

@@ -37,11 +37,6 @@ const Home = () => {
               <button className={styles.botao}>Reservar Mesa</button>
             </Link>
           </li>
-            <li>
-              <Link href="/gestao">
-                <button className={styles.botao}>Gestão</button>
-              </Link>
-            </li>
             </ul>
       </nav>
 

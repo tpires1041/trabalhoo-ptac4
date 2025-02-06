@@ -12,7 +12,7 @@ export async function fetchReserva(data: string): Promise<Reserva[] | null> {
     try {
         const cookieStored = await cookies()
         const token = cookieStored.get('restaurant-token')
-        const res = await fetch(`${ApiURL}/reservas/date`, {
+        const res = await fetch(`${ApiURL}/reservas/list`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -26,6 +26,32 @@ export async function fetchReserva(data: string): Promise<Reserva[] | null> {
         console.error(error)
         return null
     }
+}
+
+export async function fetchMesasDisponiveis(data: string) {
+    const cookieStored = await cookies()
+    const token = cookieStored.get('restaurant-token')
+
+    if (!token) {
+        throw new Error('Token não encontrado')
+    }
+
+    const res = await fetch(`${ApiURL}/mesa/disponibilidade`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token.value}`
+        },
+        body: JSON.stringify({ data })
+    })
+
+    if (!res.ok) {
+        throw new Error('Erro ao buscar mesas disponíveis')
+    }
+
+    const dataRes = await res.json()
+    console.log('Resposta da API:', dataRes)
+    return dataRes
 }
 
 export async function fetchNovaReserva(mesaId: number, n_pessoas: number, data: string): Promise<{ erro: boolean, mensagem: string }> {
@@ -55,14 +81,11 @@ export async function fetchNovaReserva(mesaId: number, n_pessoas: number, data: 
     }
 }
 
-export async function fetchMinhasReservas(data: string): Promise<Reserva[] | null> {
-    if (!data) {
-        return null
-    }
+export async function fetchMinhasReservas(): Promise<Reserva[] | null> {
     try {
         const cookieStored = await cookies()
         const token = cookieStored.get('restaurant-token')
-        const res = await fetch(`${ApiURL}/reservas/date`, {
+        const res = await fetch(`${ApiURL}/reservas/minhas`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -77,36 +100,29 @@ export async function fetchMinhasReservas(data: string): Promise<Reserva[] | nul
     }
 }
 
-export async function fetchAtualizarReserva(state: any, formData: FormData) {
+export async function fetchAtualizarReserva(reservaId: number, reserva: Reserva) {
     const cookieStored = await cookies()
     const token = cookieStored.get('restaurant-token')
-    const n_pessoas = parseInt(formData.get('n_pessoas') as string)
-    const reservaId = parseInt(formData.get('reservaId') as string)
 
-    if (!reservaId || !n_pessoas || !token) {
-        return { erro: true, mensagem: "Dados inválidos" }
+    if (!token) {
+        throw new Error('Token não encontrado')
     }
 
-    try {
-        const res = await fetch(`${ApiURL}/reservas/`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token?.value}`
-            },
-            body: JSON.stringify({ reservaId, n_pessoas })
-        })
+    const res = await fetch(`${ApiURL}/reservas/${reservaId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token.value}`
+        },
+        body: JSON.stringify(reserva)
+    })
 
-        const dataRes = await res.json()
-        const { erro, mensagem } = dataRes
-        if (!erro) {
-            revalidateTag('minhas_reservas')
-        }
-        return { erro, mensagem }
-    } catch (error) {
-        console.error(error)
-        return { erro: true, mensagem: 'Erro ao fazer requisição' }
+    if (!res.ok) {
+        throw new Error('Erro ao atualizar reserva')
     }
+
+    const dataRes = await res.json()
+    return dataRes
 }
 
 export async function fetchCancelarReserva(reservaId: number) {
@@ -118,8 +134,8 @@ export async function fetchCancelarReserva(reservaId: number) {
     }
 
     try {
-        const res = await fetch(`${ApiURL}/reservas/cancelar`, {
-            method: 'PATCH',
+        const res = await fetch(`${ApiURL}/reservas`, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token?.value}`
@@ -147,7 +163,7 @@ export async function fetchTodasReservas(data: string): Promise<Reserva[] | null
     try {
         const cookieStored = await cookies()
         const token = cookieStored.get('restaurant-token')
-        const res = await fetch(`${ApiURL}/reservas/date`, {
+        const res = await fetch(`${ApiURL}/reservas/list`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

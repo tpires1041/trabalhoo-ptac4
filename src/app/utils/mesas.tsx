@@ -12,7 +12,7 @@ export async function fetchMesas(): Promise<Mesas[] | null> {
 
     if (!token) return null;
 
-    const res = await fetch(`${ApiURL}/mesas`, {
+    const res = await fetch(`${ApiURL}/mesa/`, {
       method: 'GET',
       headers: { 'Authorization': `Bearer ${token}` },
       next: { tags: ['carregar-mesas'] }

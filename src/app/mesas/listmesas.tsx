@@ -26,7 +26,7 @@ export default function ListMesas({ mesas, reservas }: ListMesasProps) {
   return (
     <div>
       <div>
-        <h2>Mapa Restaurante</h2>
+        <h2>Mapa do Restaurante</h2>
         <ModalMap />
         <h2>Mesas:</h2>
         <div>

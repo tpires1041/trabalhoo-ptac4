@@ -1,11 +1,12 @@
 'use client';
 
+import styles from '../styles/reservasnovo.module.css';
 import { Usuario } from '../interfaces/usuario';
 import Link from 'next/link';
-import { ClipboardList, ChefHat, User, LogOut } from 'lucide-react';
+import { ClipboardList, User, LogOut } from 'lucide-react';
 
 type MenuProps = {
-  user: Usuario;
+  user: Usuario | null;
 };
 
 export default function Menu({ user }: MenuProps) {
@@ -13,41 +14,36 @@ export default function Menu({ user }: MenuProps) {
     console.log('Logout realizado'); 
   }
 
+  if (!user) {
+    return <div>Carregando...</div>;
+  }
+
   return (
-    <div>
-      <div>
-        <img src={'/default-avatar.png'} alt={`${user.nome}'s avatar`} />
-        <h2>{user.nome}</h2>
-        <p>{user.tipo}</p>
+    <div className={styles.menuContainer}>
+      <div className={styles.userInfo}>
+        <img className={styles.avatar} src={'/default-avatar.png'} alt={`${user.nome}'s avatar`} />
+        <h2 className={styles.userName}>{user.nome}</h2>
+        <p className={styles.userType}>{user.tipo}</p>
       </div>
-      {user.tipo === 'admin' ? (
-        <>
-          <div>
-            <Link href="/reservas/novo"><ClipboardList /> Nova Reserva</Link>
-          </div>
-          <div>
-            <Link href="/reservas/todas"><ClipboardList /> Todas Reservas</Link>
-          </div>
-          <div>
-            <Link href="/mesas"><ChefHat /> Mesas</Link>
-          </div>
-          <div>
-            <Link href="/profile"><User /> Perfil</Link>
-          </div>
-          <div>
-            <button onClick={handleLogout}>Sair</button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div>
-            <Link href="/profile"><User /> Perfil</Link>
-          </div>
-          <div>
-            <button onClick={handleLogout}>Sair</button>
-          </div>
-        </>
-      )}
+      <nav className={styles.nav}>
+        <ul className={styles.navList}>
+          <li className={styles.navItem}>
+            <Link href="/reservas">
+              <ClipboardList /> Reservas
+            </Link>
+          </li>
+          <li className={styles.navItem}>
+            <Link href="/perfil">
+              <User /> Perfil
+            </Link>
+          </li>
+          <li className={styles.navItem}>
+            <button className={styles.logoutButton} onClick={handleLogout}>
+              <LogOut /> Sair
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }

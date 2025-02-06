@@ -1,97 +1,109 @@
 'use client'
 
-import { useActionState, useState } from 'react';
-import { Reserva } from '../interfaces/reservas';
+import { useState, FormEvent } from 'react';
 import { fetchAtualizarReserva, fetchCancelarReserva } from '../utils/reservas';
+import { Reserva } from '../interfaces/reservas';
+import styles from '../styles/reservas.module.css';
 
-type ListMinhasReservasProps = {
-  reservas: Reserva[];
-};
-
-export default function ListMinhasReservas({ reservas }: ListMinhasReservasProps) {
+export default function ListMinhasReservas({ reservas }: { reservas: Reserva[] }) {
+  const [reservasState, setReservasState] = useState<Reserva[]>(reservas);
   const [reserva, setReserva] = useState<Reserva | null>(null);
   const [cancReserva, setCancReserva] = useState<Reserva | null>(null);
-  const [state, action, isPading] = useActionState(fetchAtualizarReserva, { erro: false, mensagem: '' });
+  const [response, setResponse] = useState({ erro: false, mensagem: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleCancelReserva() {
     if (cancReserva) {
-      const res = await fetchCancelarReserva(cancReserva.id);
-      console.log(res);
-      setCancReserva(null);
+      setIsLoading(true);
+      try {
+        const res = await fetchCancelarReserva(cancReserva.id);
+        setResponse(res);
+        if (!res.erro) {
+          // Atualize a lista de reservas após o cancelamento
+          setReservasState(reservasState.filter(r => r.id !== cancReserva.id));
+          setReserva(null);
+          setCancReserva(null);
+        }
+      } catch (error) {
+        console.error("Erro ao cancelar reserva:", error);
+        setResponse({ erro: true, mensagem: 'Erro ao cancelar reserva' });
+      }
+      setIsLoading(false);
     }
   }
 
-  function openModal(reserva: Reserva) {
-    setReserva(reserva);
+  async function handleUpdateReserva(e: FormEvent) {
+    e.preventDefault();
+    if (reserva) {
+      setIsLoading(true);
+      try {
+        const res = await fetchAtualizarReserva(reserva.id, reserva);
+        setResponse(res);
+        if (!res.erro) {
+          // Atualize a lista de reservas após a atualização
+          setReservasState(reservasState.map(r => r.id === reserva.id ? res.reserva : r));
+          setReserva(null);
+        }
+      } catch (error) {
+        console.error("Erro ao atualizar reserva:", error);
+        setResponse({ erro: true, mensagem: 'Erro ao atualizar reserva' });
+      }
+      setIsLoading(false);
+    }
   }
 
   return (
     <div>
-      <h2>Suas Reservas</h2>
-      {reservas.length === 0 ? (
-        <p>Você ainda não tem reservas</p>
-      ) : (
-        <div>
-          {reservas.map((reserva) => (
-            <div key={reserva.id} style={{ background: reserva.status ? '' : 'gray' }}>
-              <p>Mesa: {reserva.mesa?.codigo}</p>
-              <p>Data: {reserva.data}</p>
-              <p>Pessoas: {reserva.n_pessoas}</p>
-              {reserva.status ? (
-                <div>
-                  <button onClick={() => openModal(reserva)}>Alterar</button>
-                  <button type="button" onClick={() => setCancReserva(reserva)}>
-                    Cancelar
-                  </button>
-                </div>
-              ) : (
-                <p>Reserva Cancelada</p>
-              )}
+      <h2>Minhas Reservas</h2>
+      {response.erro && <p className={styles.error}>{response.mensagem}</p>}
+      {isLoading && <p>Carregando...</p>}
+      <ul>
+        {reservasState.map((reserva) => (
+          <li key={reserva.id} className={styles.reservaItem}>
+            <div className={styles.reservaInfo}>
+              <p>Mesa: {reserva.mesa ? reserva.mesa.codigo : 'N/A'}</p>
+              <p>Data: {new Date(reserva.data).toLocaleDateString()}</p>
             </div>
-          ))}
-        </div>
-      )}
-
-      {reserva && !state.mensagem && (
+            <div className={styles.reservaActions}>
+              <button className={styles.button} onClick={() => setReserva(reserva)}>Atualizar</button>
+              <button className={styles.button} onClick={() => setCancReserva(reserva)}>Cancelar</button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      {reserva && (
         <div>
-          <h3>Confirmar Reserva:</h3>
-          <form action={action}>
-            <label>
+          <h3>Atualizar Reserva</h3>
+          <form onSubmit={handleUpdateReserva}>
+            <label className={styles.label}>
               Data:
-              <input type="date" defaultValue={reserva.data} readOnly name="data" />
+              <input
+                className={styles.input}
+                type="date"
+                value={reserva.data && !isNaN(new Date(reserva.data).getTime()) ? new Date(reserva.data).toISOString().split('T')[0] : ''}
+                onChange={(e) => setReserva({ ...reserva, data: new Date(e.target.value) })}
+              />
             </label>
-            <input type="hidden" defaultValue={reserva.id} name="reservaId" />
-            <label>
-              Mesa Selecionada:
-              <input type="number" defaultValue={reserva.mesa?.codigo} name="codigo" />
-            </label>
-            <label>
+            <label className={styles.label}>
               Número de pessoas:
-              <input type="number" max={reserva.mesa?.n_lugares} defaultValue={reserva.n_pessoas} min={1} name="n_pessoas" />
+              <input
+                className={styles.input}
+                type="number"
+                value={reserva.n_pessoas}
+                onChange={(e) => setReserva({ ...reserva, n_pessoas: parseInt(e.target.value) })}
+              />
             </label>
-            {state.erro && <p>{state.mensagem}</p>}
-            <div>
-              <button type="button" onClick={() => setReserva(null)}>
-                Cancelar
-              </button>
-              <button type="submit">Confirmar</button>
-            </div>
+            <button className={styles.button} type="submit">Confirmar</button>
+            <button className={styles.button} type="button" onClick={() => setReserva(null)}>Cancelar</button>
           </form>
         </div>
       )}
-
       {cancReserva && (
         <div>
-          <h3>Confirmar Cancelamento:</h3>
-          <p>Realmente deseja cancelar essa reserva?</p>
-          <div>
-            <button type="button" onClick={() => setCancReserva(null)}>
-              Cancelar
-            </button>
-            <button type="button" onClick={handleCancelReserva}>
-              Confirmar Cancelamento
-            </button>
-          </div>
+          <h3>Cancelar Reserva</h3>
+          <p>Tem certeza que deseja cancelar a reserva da mesa {cancReserva.mesa ? cancReserva.mesa.codigo : 'N/A'}?</p>
+          <button className={styles.button} onClick={handleCancelReserva}>Confirmar</button>
+          <button className={styles.button} onClick={() => setCancReserva(null)}>Cancelar</button>
         </div>
       )}
     </div>

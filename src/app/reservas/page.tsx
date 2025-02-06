@@ -1,5 +1,8 @@
+import styles from '../styles/reservas.module.css';
 import { redirect } from "next/navigation";
-import Menu from "../components/Menu";
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import Menu from "../components/menu";
 import { fetchUser } from "../utils/auth";
 import ListMinhasReservas from "./listMinhaReservas";
 import { fetchMinhasReservas } from "../utils/reservas";
@@ -14,9 +17,16 @@ export default async function Reservas() {
 
   return (
     <div>
-      <Menu user={user} />
-      <h1>Reservas</h1>
-      <ListMinhasReservas reservas={reservas} />
+      <Header/>
+    <div className={styles.container}>
+      <div className={styles.menuContainer}>
+        <Menu user={user} />
+      </div>
+      <div className={styles.reservasContainer}>
+        <ListMinhasReservas reservas={reservas} />
+      </div>
+    </div>
+    <Footer/>
     </div>
   );
 }
