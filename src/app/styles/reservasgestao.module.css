@@ -83,7 +83,7 @@
   
   /* Botão de criação */
   .botaoDeletar {
-    background-color: #007bff;
+    background-color: #f10808;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -93,7 +93,7 @@
   }
   
   .botaoDeletar:hover {
-    background-color: #0056b3;
+    background-color: #e64c10;
   }
   
   /* Lista de Reservas */

@@ -8,10 +8,12 @@ import { fetchMesasDisponiveis } from '../../utils/reservas';
 import { fetchNovaReserva } from '../../utils/reservas';
 import { useRouter } from 'next/navigation';
 
+// define o tipo das props que o componente recebe
 type ListMesasReservaProps = {
     mesas: Mesas[];
 };
 
+// componente que lista as mesas disponíveis para reserva
 export function ListMesasReserva({ mesas }: ListMesasReservaProps) {
     const [data, setData] = useState('');
     const [mesasDisponiveis, setMesasDisponiveis] = useState<Mesas[] | null>(null);
@@ -21,6 +23,7 @@ export function ListMesasReserva({ mesas }: ListMesasReservaProps) {
     const [response, setResponse] = useState({ erro: false, mensagem: '' });
     const router = useRouter();
 
+    // função para buscar mesas disponíveis
     async function handleFetchData() {
         setLoadMesas(true);
         
@@ -37,6 +40,7 @@ export function ListMesasReserva({ mesas }: ListMesasReservaProps) {
         setLoadMesas(false);
     }
 
+    // função para envio do formulário de reserva
     async function handleFormSubmit(e: FormEvent) {
         e.preventDefault();
         const form = e.target as HTMLFormElement;

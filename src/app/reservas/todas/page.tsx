@@ -1,25 +1,27 @@
-
-
 import { redirect } from "next/navigation";
-import  Menu  from "../../components/menu";
-import { fetchMinhasReservas } from "../../utils/reservas";
 import { fetchUser } from "../../utils/auth";
-import ListAllReservas from "./listAllReservas";    
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import ListAllReservas from "./listAllReservas";
+import styles from '../../styles/reservas.module.css';
 
 export default async function Reservas() {
-   let reservas;
-
-  const user = await fetchUser()
-  if (user?.tipo != 'admin'){
-      redirect('/')
-}
+  const user = await fetchUser();
+  
+  // redireciona para a página inicial se o usuário não for admin
+  if (user?.tipo !== 'admin') {
+    redirect('/');
+  }
 
   return (
     <div>
-      <Menu user={user} />
-      <h1>Reservas</h1>
-      <ListAllReservas/>
+      <Header/>
+      <div className={styles.container}>
+        <div className={styles.reservasList}>
+          <ListAllReservas />
+        </div>
+      </div>
+      <Footer/>
     </div>
-  )
+  );
 }
-

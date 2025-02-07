@@ -1,17 +1,20 @@
-'use client';
+'use client';  
 
-import styles from '../styles/footer.module.css';
 
-const Footer = () => {
-  return (
+import styles from '../styles/footer.module.css';  
+
+// cria o componente do rodapé  
+const Footer = () => {  
+  return (  
     <footer className={styles.footer}>
       <ul className={styles.linksRedesSociais}>
-        <li><a href="https://facebook.com" target="_blank">Facebook</a></li>
-        <li><a href="https://instagram.com" target="_blank">Instagram</a></li>
-        <li><a href="https://twitter.com" target="_blank">Twitter</a></li>
-      </ul>
-    </footer>
-  );
-};
+        <li><a href="https://facebook.com" target="_blank">Facebook</a></li> 
+        <li><a href="https://instagram.com" target="_blank">Instagram</a></li> 
+        <li><a href="https://twitter.com" target="_blank">Twitter</a></li> 
+      </ul>  
+    </footer>  
+  );  
+};  
 
-export default Footer;
+
+export default Footer;  

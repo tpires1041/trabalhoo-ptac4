@@ -4,8 +4,8 @@ import { useEffect, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import styles from '../styles/login.module.css';
 import Button from '../components/Button';
+import styles from '../styles/login.module.css';
 import Link from 'next/link';
 import { setCookie, parseCookies } from 'nookies';
 import { ApiURL } from '../../../config';
@@ -14,18 +14,22 @@ const PaginaLogin = () => {
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+
+
   const router = useRouter();
 
+  // verifica se o usuário já está logado ao carregar a página
   useEffect(() => {
     const { 'restaurant-token': token } = parseCookies();
     if (token) {
-      console.log("logado")
+      console.log("logado");
     }
   }, [router]);
 
+  // função chamada ao enviar o formulário
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
+    e.preventDefault(); 
+    try {  
       const response = await fetch(`${ApiURL}/auth/login`, {
         method: 'POST',
         headers: {
@@ -39,12 +43,12 @@ const PaginaLogin = () => {
         const { erro, mensagem, token } = data;
 
         if (erro) {
-          setErrorMsg(mensagem);
+          setErrorMsg(mensagem); 
         } else {
           setCookie(undefined, 'restaurant-token', token, {
-            maxAge: 60 * 60 * 1,
+            maxAge: 60 * 60 * 1, 
           });
-          router.push('/');
+          router.push('/'); 
         }
       } else {
         setErrorMsg('Erro ao fazer login. Verifique suas credenciais.');
@@ -59,7 +63,7 @@ const PaginaLogin = () => {
     <>
       <Header />
       <div className={styles.container}>
-        <div className={styles.background}></div>
+        <div className={styles.background}></div> 
         <form onSubmit={handleSubmit} className={styles.formulario}>
           <h1 className={styles.titulo}>Login</h1>
           <div className={styles.grupoInput}>
@@ -88,6 +92,7 @@ const PaginaLogin = () => {
           </div>
           {errorMsg && <p className={styles.errorMsg}>{errorMsg}</p>}
           <Button titulo="Entrar" tipo="submit" />
+
           <Link href="./cadastrar">
             <Button titulo="Cadastrar" tipo="submit" />
           </Link>

@@ -1,108 +1,125 @@
 'use server'
 
-import { cookies } from "next/headers";
-import { ApiURL } from "../../../config";
-import { Mesas } from "./../interfaces/mesas";
-import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers"
+import { ApiURL } from "../../../config"
+import { redirect } from "next/navigation"
 
-export async function fetchMesas(): Promise<Mesas[] | null> {
-  try {
-    const cookieStored = cookies();
-    const token = cookieStored.get('restaurant-token')?.value;
+// função para buscar as mesas
+export async function fetchMesas() {
+    const cookieStored = await cookies()
+    const token = cookieStored.get('restaurant-token')
 
-    if (!token) return null;
+    if (!token) {
+        console.log('Token não encontrado')
+        redirect('/login')
+    }
 
-    const res = await fetch(`${ApiURL}/mesa/`, {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${token}` },
-      next: { tags: ['carregar-mesas'] }
-    });
+    console.log('Buscando mesas com token:', token.value)
 
-    if (!res.ok) return null;
+    // faz uma requisição para buscar as mesas
+    const res = await fetch(`${ApiURL}/mesa`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token.value}`
+        }
+    })
 
-    const data = await res.json();
-    return data.mesas || null;
-  } catch (error) {
-    console.error("Erro ao buscar mesas:", error);
-    return null;
-  }
+  
+    if (!res.ok) {
+        const errorText = await res.text()
+        console.error('Erro ao buscar mesas:', errorText)
+        throw new Error('Erro ao buscar mesas')
+    }
+    const dataRes = await res.json()
+    return dataRes.mesas
 }
 
-export async function fetchAtualizarMesa(state: any, formData: FormData) {
-  const cookieStored = cookies();
-  const token = cookieStored.get('restaurant-token')?.value;
+// função para criar uma nova mesa
+export async function criarMesa(codigo: string, n_lugares: number) {
+    const cookieStored = await cookies()
+    const token = cookieStored.get('restaurant-token')
 
-  const codigo = formData.get('codigo');
-  const n_lugares = parseInt(formData.get('n_lugares') as string, 10);
+    
+    if (!token) {
+        throw new Error('Token não encontrado')
+    }
 
-  if (!codigo || isNaN(n_lugares)) {
-    return {
-      erro: true,
-      mensagem: 'Dados inválidos'
-    };
-  }
+    console.log('Criando mesa com:', { codigo, n_lugares })
 
-  try {
-    const res = await fetch(`${ApiURL}/mesas/`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ codigo, n_lugares })
-    });
+    // faz uma requisição para criar uma nova mesa
+    const res = await fetch(`${ApiURL}/mesa/novo`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token.value}`
+        },
+        body: JSON.stringify({ codigo, n_lugares })
+    })
 
-    const data = await res.json();
-    const { erro, mensagem } = data;
-
-    if (!erro) revalidateTag('carregar-mesas');
-
-    return { erro, mensagem };
-  } catch (error) {
-    console.error("Erro ao atualizar mesa:", error);
-    return {
-      erro: true,
-      mensagem: 'Algum erro inesperado aconteceu'
-    };
-  }
+    if (!res.ok) {
+        const errorText = await res.text()
+        console.error('Erro ao criar mesa:', errorText)
+        throw new Error('Erro ao criar mesa')
+    }
+    const dataRes = await res.json()
+    return dataRes
 }
 
-export async function fetchCriarMesa(state: any, formData: FormData) {
-  const cookieStored = cookies();
-  const token = cookieStored.get('restaurant-token')?.value;
+// função para atualizar uma mesa existente
+export async function atualizarMesa(id: number, codigo: string, n_lugares: number) {
+    const cookieStored = await cookies()
+    const token = cookieStored.get('restaurant-token')
 
-  const id = parseInt(formData.get('id') as string, 10);
-  const codigo = formData.get('codigo');
-  const n_lugares = parseInt(formData.get('n_lugares') as string, 10);
 
-  if (isNaN(id) || !codigo || isNaN(n_lugares)) {
-    return {
-      erro: true,
-      mensagem: 'Dados inválidos'
-    };
-  }
+    if (!token) {
+        throw new Error('Token não encontrado')
+    }
 
-  try {
-    const res = await fetch(`${ApiURL}/mesas/novo`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ id, codigo, n_lugares })
-    });
+    // faz uma requisição para atualizar uma mesa existente
+    const res = await fetch(`${ApiURL}/mesa`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token.value}`
+        },
+        body: JSON.stringify({ id, codigo, n_lugares })
+    })
 
-    const data = await res.json();
-    const { erro, mensagem } = data;
+    
+    if (!res.ok) {
+        const errorText = await res.text()
+        console.error('Erro ao atualizar mesa:', errorText)
+        throw new Error('Erro ao atualizar mesa')
+    }
+    const dataRes = await res.json()
+    return dataRes
+}
 
-    if (!erro) revalidateTag('carregar-mesas');
+// função para deletar uma mesa
+export async function deletarMesa(id: number) {
+    const cookieStored = await cookies()
+    const token = cookieStored.get('restaurant-token')
 
-    return { erro, mensagem };
-  } catch (error) {
-    console.error("Erro ao criar mesa:", error);
-    return {
-      erro: true,
-      mensagem: 'Algum erro inesperado aconteceu'
-    };
-  }
+    if (!token) {
+        throw new Error('Token não encontrado')
+    }
+
+    // faz uma requisição para deletar uma mesa
+    const res = await fetch(`${ApiURL}/mesa/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token.value}`
+        }
+    })
+
+
+    if (!res.ok) {
+        const errorText = await res.text()
+        console.error('Erro ao deletar mesa:', errorText)
+        throw new Error('Erro ao deletar mesa')
+    }
+    const dataRes = await res.json()
+    return dataRes
 }

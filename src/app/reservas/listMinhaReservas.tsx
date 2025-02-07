@@ -12,6 +12,7 @@ export default function ListMinhasReservas({ reservas }: { reservas: Reserva[] }
   const [response, setResponse] = useState({ erro: false, mensagem: '' });
   const [isLoading, setIsLoading] = useState(false);
 
+  // função para cancelar uma reserva
   async function handleCancelReserva() {
     if (cancReserva) {
       setIsLoading(true);
@@ -19,7 +20,6 @@ export default function ListMinhasReservas({ reservas }: { reservas: Reserva[] }
         const res = await fetchCancelarReserva(cancReserva.id);
         setResponse(res);
         if (!res.erro) {
-          // Atualize a lista de reservas após o cancelamento
           setReservasState(reservasState.filter(r => r.id !== cancReserva.id));
           setReserva(null);
           setCancReserva(null);
@@ -32,6 +32,7 @@ export default function ListMinhasReservas({ reservas }: { reservas: Reserva[] }
     }
   }
 
+  // função para atualizar uma reserva
   async function handleUpdateReserva(e: FormEvent) {
     e.preventDefault();
     if (reserva) {
@@ -40,7 +41,6 @@ export default function ListMinhasReservas({ reservas }: { reservas: Reserva[] }
         const res = await fetchAtualizarReserva(reserva.id, reserva);
         setResponse(res);
         if (!res.erro) {
-          // Atualize a lista de reservas após a atualização
           setReservasState(reservasState.map(r => r.id === reserva.id ? res.reserva : r));
           setReserva(null);
         }

@@ -1,151 +1,154 @@
 'use client'
 
+import { useState, useEffect, FormEvent } from 'react';
+import { fetchAtualizarReserva, fetchCancelarReserva, fetchTodasReservas } from "../../utils/reservas";
 import { Reserva } from '../../interfaces/reservas';
-import { useState, useActionState } from 'react';
-import { fetchAtualizarReserva, fetchCancelarReserva, fetchTodasReservas } from "../../utils/reservas"
-
-type ListMinhasReservasProps = {
-    reservas: Reserva[]
-}
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import styles from '../../styles/reservastodas.module.css';
 
 export default function ListAllReservas() {
-    const [reservas, setReservas] = useState<Reserva[] | null>(null)
-    const [data, setData] = useState<string>('')
-    const [reserva, setReserva] = useState<Reserva | null>(null)
-    const [cancReserva, setCancReserva] = useState<Reserva | null>(null)
-    const [state, action, isPading] = useActionState(fetchAtualizarReserva, { erro: false, mensagem: '' })
-    const [response, setResponse] = useState({})
+  const [reservas, setReservas] = useState<Reserva[] | null>(null);
+  const [data, setData] = useState<string>('');
+  const [reserva, setReserva] = useState<Reserva | null>(null);
+  const [cancReserva, setCancReserva] = useState<Reserva | null>(null);
+  const [response, setResponse] = useState({ erro: false, mensagem: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
-    function openModal(reserva: Reserva) {
-        state.erro = false
-        state.mensagem = ''
-        setReserva(reserva)
+  // useEffect para carregar as reservas quando a data muda
+  useEffect(() => {
+    async function loadReservas() {
+      if (data) {
+        const reservas = await fetchTodasReservas(data);
+        console.log('loadReservas response:', reservas);
+        setReservas(reservas);
+      }
     }
+    loadReservas();
+  }, [data]);
 
-    async function handleCancelReserva() {
-        const res = await fetchCancelarReserva(cancReserva?.id as number)
-        if (res) {
-            // Handle successful cancellation
+  // função para cancelar uma reserva
+  async function handleCancelReserva() {
+    if (cancReserva) {
+      setIsLoading(true);
+      try {
+        const res = await fetchCancelarReserva(cancReserva.id);
+        setResponse(res);
+        if (!res.erro) {
+          setReservas(reservas?.filter(r => r.id !== cancReserva.id) || null);
+          setReserva(null);
+          setCancReserva(null);
         }
+      } catch (error) {
+        console.error("Erro ao cancelar reserva:", error);
+        setResponse({ erro: true, mensagem: 'Erro ao cancelar reserva' });
+      }
+      setIsLoading(false);
     }
+  }
 
-    async function handleFetchData() {
-        const res = await fetchTodasReservas(data)
-        setReservas(res)
+  // função para atualizar uma reserva
+  async function handleUpdateReserva(e: FormEvent) {
+    e.preventDefault();
+    if (reserva) {
+      setIsLoading(true);
+      try {
+        const res = await fetchAtualizarReserva(reserva.id, reserva);
+        setResponse(res);
+        if (!res.erro) {
+          setReservas(reservas?.map(r => r.id === reserva.id ? res.reserva : r) || null);
+          setReserva(null);
+        }
+      } catch (error) {
+        console.error("Erro ao atualizar reserva:", error);
+        setResponse({ erro: true, mensagem: 'Erro ao atualizar reserva' });
+      }
+      setIsLoading(false);
     }
+  }
 
-    return (
-        <div>
-            <div>
-                <h2>Seleciona uma Data</h2>
-                <div>
-                    <input
-                        type="date"
-                        value={data}
-                        onChange={(e) => setData(e.target.value)}
-                    />
-                </div>
-                <button type="button" onClick={handleFetchData}>
-                    Buscar
-                </button>
-            </div>
-            <div>
-                <h2>Suas Reservas</h2>
-                {reservas?.length === 0 ? (
-                    <p>Você ainda não tem reservas</p>
-                ) : (
-                    <div>
-                        {reservas?.map(reserva => {
-                            return (
-                                <div key={reserva.id} style={{ background: `${reserva.status ? '' : 'gray'}` }}>
-                                    <p>Mesa: {reserva.mesa?.codigo}</p>
-                                    <p>Data: {reserva.data}</p>
-                                    <p>Pessoas: {reserva.n_pessoas}</p>
-                                    {reserva.status ? (
-                                        <div>
-                                            <button onClick={() => openModal(reserva)}>Alterar</button>
-                                            <button type="submit" onClick={() => setCancReserva(reserva)}>Cancelar</button>
-                                        </div>
-                                    ) : (
-                                        <p>Reserva Cancelada</p>
-                                    )}
-                                </div>
-                            )
-                        })}
-                    </div>
-                )}
-                {reserva && !state.mensagem && (
-                    <div>
-                        <div>
-                            <h3>Confirmar Reserva:</h3>
-                            <form action={action}>
-                                <label>
-                                    Data:
-                                    <input type="date"
-                                        defaultValue={reserva.data}
-                                        readOnly
-                                        name="data"
-                                    />
-                                </label>
-                                <input type="number"
-                                    hidden
-                                    readOnly
-                                    defaultValue={reserva.id}
-                                    name="reservaId"
-                                />
-                                <label>
-                                    Mesa Selecionada:
-                                    <input type="number"
-                                        defaultValue={reserva.mesa?.codigo}
-                                        name="codigo"
-                                    />
-                                </label>
-                                <label>
-                                    Número de pessoas:
-                                    <input type="number"
-                                        max={reserva.mesa?.n_lugares}
-                                        defaultValue={reserva.n_pessoas}
-                                        min={1}
-                                        name="n_pessoas"
-                                    />
-                                </label>
-                                {state.erro && <p>{state.mensagem}</p>}
-                                <div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setReserva(null)}
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button type="submit">Confirmar</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
-                {reserva && (
-                    <div>
-                        <div>
-                            <h3>Confirmar Cancelamento:</h3>
-                            <p>Realmente deseja cancelar essa reserva?</p>
-                            <div>
-                                <button
-                                    type="button"
-                                    onClick={() => setCancReserva(null)}
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleCancelReserva}
-                                >
-                                    Confirmar Cancelamento
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
+  // função para buscar reservas com base na data
+  async function handleFetchData() {
+    const res = await fetchTodasReservas(data);
+    console.log('handleFetchData response:', res);
+    if (res && res.length > 0) {
+      setReservas(res);
+      setResponse({ erro: false, mensagem: 'Reservas encontradas com sucesso!' });
+    } else {
+      setReservas([]);
+      setResponse({ erro: true, mensagem: 'Nenhuma reserva encontrada para a data especificada.' });
+    }
+  }
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.content}>
+        <h2 className={styles.header}>Todas as Reservas</h2>
+        <div className={styles.inputContainer}>
+          <input
+            type="date"
+            value={data}
+            onChange={(e) => setData(e.target.value)}
+            className={styles.input}
+          />
+          <button className={styles.button} type="button" onClick={handleFetchData}>Buscar</button>
         </div>
-    )
+        {response.erro && <p className={styles.error}>{response.mensagem}</p>}
+        {isLoading && <p>Carregando...</p>}
+        <ul className={styles.reservasList}>
+          {reservas?.map((reserva) => (
+            <li key={reserva.id} className={styles.reservaItem}>
+              <div className={styles.reservaInfo}>
+                <p>Mesa: {reserva.mesa ? reserva.mesa.codigo : 'N/A'}</p>
+                <p>Data: {new Date(reserva.data).toLocaleDateString()}</p>
+              </div>
+              <div className={styles.reservaActions}>
+                <button className={styles.button} onClick={() => setReserva(reserva)}>Atualizar</button>
+                <button className={styles.button} onClick={() => setCancReserva(reserva)}>Cancelar</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        {reserva && (
+          <div className={styles.formContainer}>
+            <h3 className={styles.formTitle}>Atualizar Reserva</h3>
+            <form onSubmit={handleUpdateReserva} className={styles.form}>
+              <label className={styles.label}>
+                Data:
+                <input
+                  className={styles.input}
+                  type="date"
+                  value={reserva.data && !isNaN(new Date(reserva.data).getTime()) ? new Date(reserva.data).toISOString().split('T')[0] : ''}
+                  onChange={(e) => setReserva({ ...reserva, data: new Date(e.target.value) })}
+                />
+              </label>
+              <label className={styles.label}>
+                Número de pessoas:
+                <input
+                  className={styles.input}
+                  type="number"
+                  value={reserva.n_pessoas}
+                  onChange={(e) => setReserva({ ...reserva, n_pessoas: parseInt(e.target.value) })}
+                />
+              </label>
+              <div className={styles.buttonContainer}>
+                <button className={styles.button} type="submit">Confirmar</button>
+                <button className={styles.button} type="button" onClick={() => setReserva(null)}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        )}
+        {cancReserva && (
+          <div className={styles.formContainer}>
+            <h3 className={styles.formTitle}>Cancelar Reserva</h3>
+            <p>Tem certeza que deseja cancelar a reserva da mesa {cancReserva.mesa ? cancReserva.mesa.codigo : 'N/A'}?</p>
+            <div className={styles.buttonContainer}>
+              <button className={styles.button} onClick={handleCancelReserva}>Confirmar</button>
+              <button className={styles.button} onClick={() => setCancReserva(null)}>Cancelar</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
